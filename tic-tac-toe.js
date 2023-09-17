@@ -19,12 +19,25 @@ function createBoard() {
     }
 }
 
+function makeComputerMove() {
+    if (isComputerPlaying && currentPlayer === "O") {
+        let index;
+        do {
+            index = Math.floor(Math.random() * 9);
+        } while (board[index] !== '');
+
+        setTimeout(() => {
+            makeMove(index);
+        }, 1000);
+    }
+}
+
 function makeMove(index) {
-    if (board[index] === "" && (!isComputerPlaying || currentPlayer === "X")) {
+    if (board[index] === "") {
         board[index] = currentPlayer;
         const cell = document.getElementsByClassName("cell")[index];
         cell.textContent = currentPlayer;
-        if (checkWinner()) {
+        if (checkWinner(currentPlayer)) {
             setTimeout(() => {
                 alert(`Player ${currentPlayer} wins!`);
                 resetBoard();
@@ -37,27 +50,13 @@ function makeMove(index) {
         } else {
             currentPlayer = currentPlayer === "X" ? "O" : "X";
             if (isComputerPlaying && currentPlayer === "O") {
-                setTimeout(makeComputerMove, 500);
+                makeComputerMove();
             }
         }
     }
 }
 
-function makeComputerMove() {
-    const emptyCells = board.reduce((acc, cell, index) => {
-        if (cell === "") {
-            acc.push(index);
-        }
-        return acc;
-    }, []);
-
-    const randomIndex = Math.floor(Math.random() * emptyCells.length);
-    const computerMove = emptyCells[randomIndex];
-
-    makeMove(computerMove);
-}
-
-function checkWinner() {
+function checkWinner(player) {
     const winningCombinations = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8],
         [0, 3, 6], [1, 4, 7], [2, 5, 8],
